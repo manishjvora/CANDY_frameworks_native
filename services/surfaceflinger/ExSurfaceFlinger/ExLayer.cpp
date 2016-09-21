@@ -43,6 +43,7 @@
 
 namespace android {
 
+#ifndef USE_HWC2
 /* Calculates the aspect ratio for external display based on the video w/h */
 static Rect getAspectRatio(const sp<const DisplayDevice>& hw,
                             const int& srcWidth, const int& srcHeight) {
@@ -67,6 +68,7 @@ static Rect getAspectRatio(const sp<const DisplayDevice>& hw,
 
     return outRect;
 }
+#endif
 
 ExLayer::ExLayer(SurfaceFlinger* flinger, const sp<Client>& client,
                  const String8& name, uint32_t w, uint32_t h, uint32_t flags)
@@ -157,6 +159,7 @@ bool ExLayer::isYuvLayer() const {
     return false;
 }
 
+#ifndef USE_HWC2
 void ExLayer::setPosition(const sp<const DisplayDevice>& hw,
                           HWComposer::HWCLayerInterface& layer, const State& state) {
     /* Set dest_rect to display width and height, if external_only flag
@@ -195,6 +198,7 @@ void ExLayer::setAcquiredFenceIfBlit(int &fenceFd,
             layer.getCompositionType(), fenceFd);
 #endif
 }
+#endif // ndef USE_HWC2
 
 bool ExLayer::canAllowGPUForProtected() const {
     if(isProtected()) {
