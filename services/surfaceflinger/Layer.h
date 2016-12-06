@@ -437,6 +437,10 @@ public:
 
     /* always call base class first */
     void dump(String8& result, Colorizer& colorizer) const;
+#ifdef USE_HWC2
+    static void miniDumpHeader(String8& result);
+    void miniDump(String8& result, int32_t hwcId) const;
+#endif
     void dumpFrameStats(String8& result) const;
     void clearFrameStats();
     void logFrameStats();
@@ -624,6 +628,8 @@ private:
         bool forceClientComposition;
         HWC2::Composition compositionType;
         bool clearClientTarget;
+        Rect displayFrame;
+        FloatRect sourceCrop;
     };
     std::unordered_map<int32_t, HWCInfo> mHwcLayers;
 #else
