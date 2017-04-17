@@ -747,7 +747,7 @@ void Layer::setPerFrameData(const sp<const DisplayDevice>& displayDevice) {
 #ifndef USE_HWC2
         error = hwcLayer->setBuffer(nullptr, Fence::NO_FENCE);
         if (error != HWC2::Error::None) {
-            ALOGE("[%s] Failed to set null buffer: %s (%d)", mName.string(),
+            ALOGE("[%s] Failed to set color: %s (%d)", mName.string(),
                     to_string(error).c_str(), static_cast<int32_t>(error));
         }
 #endif
@@ -1435,6 +1435,7 @@ void Layer::pushPendingState() {
 
         // Wake us up to check if the frame has been received
         setTransactionFlags(eTransactionNeeded);
+        mFlinger->setTransactionFlags(eTraversalNeeded);
     }
     mPendingStates.push_back(mCurrentState);
 }
@@ -2335,6 +2336,54 @@ void Layer::dump(String8& result, Colorizer& colorizer) const
         mSurfaceFlingerConsumer->dumpState(result, "            ");
     }
 }
+
+#ifdef USE_HWC2
+void Layer::miniDumpHeader(String8& result) {
+    result.append("----------------------------------------");
+    result.append("---------------------------------------\n");
+    result.append(" Layer name\n");
+    result.append("           Z | ");
+    result.append(" Comp Type | ");
+    result.append("  Disp Frame (LTRB) | ");
+    result.append("         Source Crop (LTRB)\n");
+    result.append("----------------------------------------");
+    result.append("---------------------------------------\n");
+}
+
+void Layer::miniDump(String8& result, int32_t hwcId) const {
+    if (mHwcLayers.count(hwcId) == 0) {
+        return;
+    }
+
+    String8 name;
+    if (mName.length() > 77) {
+        std::string shortened;
+        shortened.append(mName.string(), 36);
+        shortened.append("[...]");
+        shortened.append(mName.string() + (mName.length() - 36), 36);
+        name = shortened.c_str();
+    } else {
+        name = mName;
+    }
+
+    result.appendFormat(" %s\n", name.string());
+
+    const Layer::State& layerState(getDrawingState());
+    const HWCInfo& hwcInfo = mHwcLayers.at(hwcId);
+    result.appendFormat("  %10u | ", layerState.z);
+    result.appendFormat("%10s | ",
+            to_string(getCompositionType(hwcId)).c_str());
+    const Rect& frame = hwcInfo.displayFrame;
+    result.appendFormat("%4d %4d %4d %4d | ", frame.left, frame.top,
+            frame.right, frame.bottom);
+    const FloatRect& crop = hwcInfo.sourceCrop;
+    result.appendFormat("%6.1f %6.1f %6.1f %6.1f\n", crop.left, crop.top,
+            crop.right, crop.bottom);
+
+    result.append("- - - - - - - - - - - - - - - - - - - - ");
+    result.append("- - - - - - - - - - - - - - - - - - - -\n");
+}
+#endif
 
 #ifdef USE_HWC2
 void Layer::miniDumpHeader(String8& result) {
