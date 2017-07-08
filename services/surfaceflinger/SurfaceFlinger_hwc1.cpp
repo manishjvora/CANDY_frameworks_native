@@ -65,7 +65,6 @@
 #include <private/gui/SyncFeatures.h>
 
 #include "./DisplayUtils.h"
-
 #include <set>
 
 #include "Client.h"
@@ -1616,19 +1615,12 @@ void SurfaceFlinger::handleTransactionLocked(uint32_t transactionFlags)
                             status = state.surface->query(
                                 NATIVE_WINDOW_HEIGHT, &height);
                             ALOGE_IF(status != NO_ERROR,
-                                "Unable to query height (%d)", status);
-                            if (MAX_VIRTUAL_DISPLAY_DIMENSION == 0 ||
-                                (width <= MAX_VIRTUAL_DISPLAY_DIMENSION &&
-                                 height <= MAX_VIRTUAL_DISPLAY_DIMENSION)) {
-                                int usage = 0;
-                                status = state.surface->query(
-                                    NATIVE_WINDOW_CONSUMER_USAGE_BITS, &usage);
-                                ALOGW_IF(status != NO_ERROR,
-                                    "Unable to query usage (%d)", status);
-                                if ( (status == NO_ERROR) &&
-                                      displayUtils->canAllocateHwcDisplayIdForVDS(usage)) {
-                                    hwcDisplayId = allocateHwcDisplayId(state.type);
-                                }
+                                    "Unable to query height (%d)", status);
+                            if (mUseHwcVirtualDisplays &&
+                                    (MAX_VIRTUAL_DISPLAY_DIMENSION == 0 ||
+                                    (width <= MAX_VIRTUAL_DISPLAY_DIMENSION &&
+                                     height <= MAX_VIRTUAL_DISPLAY_DIMENSION))) {
+                                hwcDisplayId = allocateHwcDisplayId(state.type);
                             }
 
                             displayUtils->initVDSInstance(mHwc, hwcDisplayId, state.surface,
