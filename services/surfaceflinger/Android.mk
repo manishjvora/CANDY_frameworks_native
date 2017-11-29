@@ -57,7 +57,6 @@ LOCAL_CFLAGS += -DDEBUG_CONT_DUMPSYS
 endif
 
 LOCAL_CFLAGS += -DGL_GLEXT_PROTOTYPES -DEGL_EGLEXT_PROTOTYPES
-LOCAL_CFLAGS += -O3
 
 ifeq ($(TARGET_USES_QCOM_DISPLAY_BSP), true)
 LOCAL_CFLAGS += -DQTI_BSP
@@ -140,7 +139,7 @@ LOCAL_CLANG := true
 
 LOCAL_LDFLAGS_32 := -Wl,--version-script,art/sigchainlib/version-script32.txt -Wl,--export-dynamic
 LOCAL_LDFLAGS_64 := -Wl,--version-script,art/sigchainlib/version-script64.txt -Wl,--export-dynamic
-LOCAL_CFLAGS := -DLOG_TAG=\"SurfaceFlinger\" -O3
+LOCAL_CFLAGS := -DLOG_TAG=\"SurfaceFlinger\"
 
 LOCAL_INIT_RC := surfaceflinger.rc
 
@@ -188,7 +187,7 @@ include $(CLEAR_VARS)
 
 LOCAL_CLANG := true
 
-LOCAL_CFLAGS := -DLOG_TAG=\"SurfaceFlinger\" -O3
+LOCAL_CFLAGS := -DLOG_TAG=\"SurfaceFlinger\"
 
 LOCAL_SRC_FILES := \
     DdmConnection.cpp
