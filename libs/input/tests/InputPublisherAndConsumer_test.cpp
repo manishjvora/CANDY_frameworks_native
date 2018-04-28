@@ -89,9 +89,8 @@ void InputPublisherAndConsumerTest::PublishAndConsumeKeyEvent() {
 
     uint32_t consumeSeq;
     InputEvent* event;
-    int32_t displayId;
     status = mConsumer->consume(&mEventFactory, true /*consumeBatches*/, -1, &consumeSeq, &event,
-            &displayId);
+            0);
     ASSERT_EQ(OK, status)
             << "consumer consume should return OK";
 
@@ -134,7 +133,7 @@ void InputPublisherAndConsumerTest::PublishAndConsumeMotionEvent() {
     const uint32_t seq = 15;
     const int32_t deviceId = 1;
     const int32_t source = AINPUT_SOURCE_TOUCHSCREEN;
-    int32_t displayId = 0;
+    const int32_t displayId = 0;
     const int32_t action = AMOTION_EVENT_ACTION_MOVE;
     const int32_t actionButton = 0;
     const int32_t flags = AMOTION_EVENT_FLAG_WINDOW_IS_OBSCURED;
@@ -177,7 +176,7 @@ void InputPublisherAndConsumerTest::PublishAndConsumeMotionEvent() {
     uint32_t consumeSeq;
     InputEvent* event;
     status = mConsumer->consume(&mEventFactory, true /*consumeBatches*/, -1, &consumeSeq, &event,
-            &displayId);
+            0);
     ASSERT_EQ(OK, status)
             << "consumer consume should return OK";
 
